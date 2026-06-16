@@ -1,0 +1,38 @@
+{
+  "name": "date-x",
+  "version": "1.0.0",
+  "description": "Zero-dependency date manipulation and formatting utilities",
+  "type": "module",
+  "main": "src/index.js",
+  "bin": {
+    "date-x": "cli.js"
+  },
+  "files": [
+    "src",
+    "cli.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "import": "./src/index.js"
+    }
+  },
+  "scripts": {
+    "test": "node test/date-x.test.js",
+    "demo": "node cli.js demo"
+  },
+  "keywords": [
+    "date",
+    "time",
+    "format",
+    "parse",
+    "utility",
+    "zero-dependency"
+  ],
+  "author": "sulthonzh",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
