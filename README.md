@@ -1,10 +1,23 @@
-# Date-x - Zero-dependency Date Utilities
+# date-x — 40+ Date Utilities, Zero Dependencies, Zero Headaches
 
-A comprehensive, zero-dependency JavaScript library for date manipulation, formatting, and comparison. Date-x provides robust utilities for working with dates in both browser and Node.js environments.
+Stop wrestling with `new Date()`. date-x gives you `isToday()`, `addDays()`, `diffInDays()`, `startOfWeek()`, and 35+ more utilities — all in a ~12KB zero-dependency package that works in Node.js and browsers.
 
-## Why Date-x?
+## Why date-x over date-fns or Day.js?
 
-JavaScript's built-in Date object is powerful but cumbersome for common tasks. Date-x fills the gaps with:
+| Feature | date-x | date-fns | Day.js |
+|---------|--------|----------|--------|
+| Bundle size | ~12KB | ~20KB+ | ~7KB |
+| Dependencies | 0 | 0 | 0 |
+| Utilities | 40+ | 200+ | 40+ |
+| CLI included | ✅ | ❌ | ❌ |
+| Tree-shakeable | ✅ ESM | ✅ | ✅ |
+| Timezone support | Native JS | ❌ (needs plugin) | ❌ (needs plugin) |
+
+**The pitch:** One package, no deps, works everywhere. CLI for quick one-offs, programmatic API for apps. No plugins, no locale packages, no setup.
+
+## Why date-x?
+
+JavaScript's built-in Date object is powerful but cumbersome for common tasks. date-x fills the gaps with:
 
 - **Intuitive API**: Methods that read like plain English (`isToday`, `addDays`, `startOfWeek`)
 - **Comprehensive Coverage**: 40+ utilities covering formatting, validation, arithmetic, and comparison

@@ -180,10 +180,10 @@ export function formatMMDDYYYY(date) {
 /**
  * Format a date with custom format
  * @param {Date|string|number} date - Date to format
- * @param {string} format - Format string (YYYY, MM, DD, HH, mm, ss)
+ * @param {string} formatStr - Format string (YYYY, MM, DD, HH, mm, ss)
  * @returns {string}
  */
-export function format(date, format) {
+export function format(date, formatStr) {
   const d = new Date(date);
   const year = d.getFullYear();
   const month = String(d.getMonth() + 1).padStart(2, '0');
@@ -192,7 +192,7 @@ export function format(date, format) {
   const minutes = String(d.getMinutes()).padStart(2, '0');
   const seconds = String(d.getSeconds()).padStart(2, '0');
 
-  return format
+  return formatStr
     .replace(/YYYY/g, year)
     .replace(/MM/g, month)
     .replace(/DD/g, day)
@@ -207,41 +207,68 @@ export function format(date, format) {
  * @returns {Date|null}
  */
 export function parse(dateStr) {
-  // Handle DD/MM/YYYY format directly
-  if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateStr)) {
-    const [day, month, year] = dateStr.split('/');
-    const parsed = new Date(`${year}-${month}-${day}`);
+  if (typeof dateStr !== 'string') {
+    return null;
+  }
+
+  // Handle YYYY-MM-DD format (ISO date)
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+    const parsed = new Date(dateStr);
     if (!isNaN(parsed.getTime())) {
       return parsed;
     }
   }
-  
-  // Handle MM/DD/YYYY format directly
+
+  // Handle DD/MM/YYYY and MM/DD/YYYY — both match /^\d{2}\/\d{2}\/\d{4}$/
+  // Use heuristic: if first part > 12, it must be DD/MM (day first)
+  // If second part > 12, it must be MM/DD (month first)
+  // If both <= 12, default to DD/MM/YYYY (most common globally)
   if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateStr)) {
-    const [month, day, year] = dateStr.split('/');
-    const parsed = new Date(`${year}-${month}-${day}`);
+    const [first, second, year] = dateStr.split('/');
+    const day = parseInt(first, 10);
+    const month = parseInt(second, 10);
+
+    if (day > 12 && month <= 12) {
+      // Must be DD/MM/YYYY
+      const parsed = new Date(`${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`);
+      if (!isNaN(parsed.getTime())) return parsed;
+    } else if (month > 12 && day <= 12) {
+      // Must be MM/DD/YYYY
+      const parsed = new Date(`${year}-${String(day).padStart(2, '0')}-${String(month).padStart(2, '0')}`);
+      if (!isNaN(parsed.getTime())) return parsed;
+    }
+
+    // Ambiguous case (both <= 12): default to DD/MM/YYYY
+    const parsed = new Date(`${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`);
     if (!isNaN(parsed.getTime())) {
       return parsed;
     }
   }
-  
-  const formats = [
-    /^\d{4}-\d{2}-\d{2}$/, // YYYY-MM-DD
-    /^\d{2}\/\d{2}\/\d{2}$/, // DD/MM/YY
-    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/, // ISO format
-    /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/, // ISO format with space
-  ];
 
-  for (const regex of formats) {
-    if (regex.test(dateStr)) {
-      const parsed = new Date(dateStr);
-      if (!isNaN(parsed.getTime())) {
-        return parsed;
-      }
+  // Handle DD/MM/YY format
+  if (/^\d{2}\/\d{2}\/\d{2}$/.test(dateStr)) {
+    const parsed = new Date(dateStr);
+    if (!isNaN(parsed.getTime())) {
+      return parsed;
     }
   }
 
-  // Try parsing directly
+  // Handle ISO datetime formats
+  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(dateStr)) {
+    const parsed = new Date(dateStr);
+    if (!isNaN(parsed.getTime())) {
+      return parsed;
+    }
+  }
+
+  if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(dateStr)) {
+    const parsed = new Date(dateStr.replace(' ', 'T'));
+    if (!isNaN(parsed.getTime())) {
+      return parsed;
+    }
+  }
+
+  // Try parsing directly (falls back to native Date parser)
   const parsed = new Date(dateStr);
   if (!isNaN(parsed.getTime())) {
     return parsed;
