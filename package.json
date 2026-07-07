@@ -42,5 +42,8 @@
   "homepage": "https://github.com/sulthonzh/date-x#readme",
   "bugs": {
     "url": "https://github.com/sulthonzh/date-x/issues"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.31.0"
   }
 }
